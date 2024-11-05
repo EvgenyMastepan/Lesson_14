@@ -101,9 +101,72 @@ func calculate(dividend: Double, divisor: Double) {
         print("Произошла неизвестная ошибка.")
     }
 }
-
-
 calculate(dividend: 53, divisor: 4)
 calculate(dividend: 7, divisor: 0)
 calculate(dividend: -14, divisor: 56)
 calculate(dividend: 185, divisor: -4)
+
+/* Создайте перечисление NetworkError, соответствующее протоколу Error, с вариантами:
+ ● .notConnected — если отсутствует подключение.
+ ● .timeout — если истекло время ожидания. Напишите две функции:
+ ● fetchUserProfile(), возвращающую Result<String, NetworkError>, которая случайным образом возвращает либо успешный результат .success("Профиль пользователя загружен"), либо ошибку .notConnected.
+ ● fetchUserOrders(), возвращающую Result<String, NetworkError>, которая случайным образом возвращает либо успешный результат .success("Заказы пользователя загружены"), либо ошибку .timeout.
+ Напишите функцию loadUserData, которая:
+ ● Использует цепочку Result для вызова сначала
+ fetchUserProfile(), а затем, при успешном
+ результате, fetchUserOrders().
+ ● В случае успешного выполнения всех вызовов выводит:
+ «Все данные загружены: Профиль и Заказы».
+ ● В случае ошибки выводит сообщение для каждого типа
+ ошибки:
+ ○ Ошибка .notConnected: «Ошибка загрузки:
+ отсутствует подключение».
+ ○ Ошибка .timeout: «Ошибка загрузки: превышено
+ время ожидания». */
+
+enum NetworkError: Error {
+    case notConnected
+    case timeout
+}
+
+func fetchUserProfile() -> Result<String, NetworkError> {
+    let success = Bool.random()
+    if success {
+        return .success("Профиль пользователя загружен")
+    } else {
+        return .failure(.notConnected)
+    }
+}
+
+func fetchUserOrders() -> Result<String, NetworkError> {
+    let success = Bool.random()
+    if success {
+        return .success("Заказы пользователя загружены")
+    } else {
+        return .failure(.timeout)
+    }
+}
+
+func loadUserData() {
+    let profileResult = fetchUserProfile()
+    switch profileResult {
+    case .success(let profileMessage):
+        print(profileMessage)
+        let ordersResult = fetchUserOrders()
+        switch ordersResult {
+        case .success(let ordersMessage):
+            print(ordersMessage)
+            print("Все данные загружены: Профиль и Заказы")
+        case .failure(let error):
+            if error == .timeout {
+                print ("Ошибка загрузки: превышено время ожидания")
+            }
+        }
+    case .failure(let error):
+        if error == .notConnected {
+            print("Ошибка загрузки: отсутствует подключение")
+        }
+    }
+}
+
+loadUserData()
