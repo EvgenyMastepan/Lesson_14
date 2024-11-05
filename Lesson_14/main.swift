@@ -170,3 +170,54 @@ func loadUserData() {
 }
 
 loadUserData()
+
+/* Создайте перечисление PaymentError, соответствующее протоколу Error, с вариантами:
+ ● .insufficientFunds — если средств на счете недостаточно.
+ ● .invalidCard — если карта недействительна.
+ ● .transactionError — для других ошибок.
+ Напишите функцию processPayment(amount:), которая выбрасывает ошибки:
+ ● .insufficientFunds, если amount больше 1000.
+ ● .invalidCard, если amount меньше или равно нулю.
+ ● В остальных случаях выводит сообщение об успешной оплате.
+ Используйте do-catch для вызова processPayment(amount:) и обработайте ошибки следующим образом:
+ ● Ошибка .insufficientFunds: «Недостаточно средств для оплаты».
+ ● Ошибка .invalidCard: «Неверная карта».
+ ● Ошибка .transactionError: «Произошла ошибка при
+ обработке транзакции».
+ Вызовите функцию с различными суммами, включая граничные случаи для каждой ошибки.
+   */
+
+enum PaymentError: Error {
+    case insufficientFunds
+    case invalidCard
+    case transactionError
+}
+
+func processPayment(amount: Double) throws {
+    if amount > 1000 {
+        throw PaymentError.insufficientFunds
+    } else if amount <= 0 {
+        throw PaymentError.invalidCard
+    } else {
+        print("Оплата на сумму \(amount) выполнена успешно.")
+    }
+}
+
+func makePayment(with amount: Double) {
+    do {
+        try processPayment(amount: amount)
+    } catch PaymentError.insufficientFunds {
+        print("Недостаточно средств для оплаты.")
+    } catch PaymentError.invalidCard {
+        print("Неверная карта.")
+    } catch {
+        print("Произошла ошибка при обработке транзакции.")
+    }
+}
+
+makePayment(with: 24.58)
+makePayment(with: 5420)
+makePayment(with: 0)
+makePayment(with: -200)
+makePayment(with: 640)
+makePayment(with: 1000)
